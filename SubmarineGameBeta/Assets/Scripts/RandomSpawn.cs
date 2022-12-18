@@ -7,64 +7,31 @@ public class RandomSpawn : MonoBehaviour
     public GameObject heart;
     public GameObject fish;
     public GameObject shark;
-    bool canSpawn = true;
-    bool canSpawnShark = true;
-    public float timer = 3;
-    public float SharkTimer;
-    public float Ftimer;
-    public float Stimer;
 
-    // Start is called before the first frame update
-    void Start()
+    public float fishTimer = 3;
+    public float sharkTimer = 5;
+    public int maxFish = 4;
+
+    private void Start()
     {
-        StartCoroutine(CheckIfCanSpawnShark()); // starts timer for shark
-        StartCoroutine(CheckIfCanSpawn()); // starts timer
+        InvokeRepeating("SpawnFish", 0, fishTimer);
+        InvokeRepeating("SpawnShark", 0, sharkTimer);
     }
 
-    IEnumerator CheckIfCanSpawn()
+    private void SpawnFish()
     {
-        canSpawn = false; // can't spawn
-        yield return new WaitForSeconds(timer); // wait for the timer
-        canSpawn = true; // can spawn
-    }
-    IEnumerator CheckIfCanSpawnShark()
-    {
-        canSpawnShark = false; // can't spawn
-        yield return new WaitForSeconds(SharkTimer); // wait for the timer
-        canSpawnShark = true; // can spawn
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        if(canSpawn) // it checks if timer hits 0, and if it does, it spawns one singular fish
+        int randomNumberOfFish = Random.Range(1, maxFish + 1);
+        for (int i = 0; i < randomNumberOfFish; i++)
         {
-            Vector3 randomSpawnPos = new Vector3(transform.position.x, Random.Range(-7, 10), transform.position.z); //Made a vector that chooses a random Y value between -7 and 10, but Z and X values are fixed
-            Instantiate(fish, randomSpawnPos, Quaternion.identity); // spawns the fish in the vector position
-            if (timer >= Ftimer)
-            {
-                timer -= 0.03f; // substracts 3/10ms from timer
-            }
-            else
-            {
-                timer = Ftimer;
-            }
-            StartCoroutine(CheckIfCanSpawn()); // restarts timer
+            Vector3 randomPos = new Vector3(transform.position.x, Random.Range(-7, 10), transform.position.z);
+            Instantiate(fish, randomPos, Quaternion.identity);
         }
-        if (canSpawnShark) // it checks if timer hits 0, and if it does, it spawns one singular fish
-        {
-            Vector3 randomSpawnPos = new Vector3(transform.position.x, Random.Range(-7, 10), transform.position.z); //Made a vector that chooses a random Y value between -7 and 10, but Z and X values are fixed
-            Instantiate(shark, randomSpawnPos, Quaternion.identity); // spawns the shark in the vector position
-            Instantiate(heart, randomSpawnPos, Quaternion.identity); // spawns the heart in the vector position
-            if (SharkTimer >= Stimer)
-            {
-                SharkTimer -= 0.03f; // substracts 3/10ms from timer
-            }
-            else
-            {
-                SharkTimer = Stimer;
-            }
-            StartCoroutine(CheckIfCanSpawnShark()); // restarts timer
-        }
+    }
+
+    private void SpawnShark()
+    {
+        Vector3 randomPos = new Vector3(transform.position.x, Random.Range(-7, 10), transform.position.z);
+        Instantiate(shark, randomPos, Quaternion.identity);
+        Instantiate(heart, randomPos, Quaternion.identity);
     }
 }
